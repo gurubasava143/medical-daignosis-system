@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Notification Detail{% endblock %}
+
+{% block extra_head %}
+<style>
+    .detail-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 30px;
+    }
+
+    .detail-glass-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 24px;
+        padding: 45px;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        color: #ffffff;
+    }
+
+    .detail-glass-card h2 {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    .detail-glass-card .subtitle {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 35px;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 14px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #00e5ff;
+        font-size: 14px;
+        min-width: 140px;
+    }
+
+    .detail-value {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 14px;
+        text-align: right;
+        flex: 1;
+    }
+
+    .btn-back {
+        display: inline-block;
+        margin-top: 30px;
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #00e5ff, #0077b6);
+        border: none;
+        border-radius: 12px;
+        color: #ffffff;
+        font-weight: 600;
+        text-transform: uppercase;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(0, 229, 255, 0.2);
+        text-align: center;
+        width: 100%;
+    }
+
+    .btn-back:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(0, 229, 255, 0.35);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-section">
+    <div class="detail-glass-card">
+        <h2>Notification Detail</h2>
+        <p class="subtitle">View notification information</p>
+
+        <div class="detail-row">
+            <span class="detail-label">User</span>
+            <span class="detail-value">{{ notif.user }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Message</span>
+            <span class="detail-value">{{ notif.message }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Type</span>
+            <span class="detail-value">{{ notif.notification_type }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Read Status</span>
+            <span class="detail-value">{{ notif.is_read|yesno:"Read,Unread" }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Date</span>
+            <span class="detail-value">{{ notif.created_date }}</span>
+        </div>
+
+        <a href="{% url 'showmnotification' %}" class="btn-back">Back to Notifications</a>
+    </div>
+</div>
+{% endblock %}

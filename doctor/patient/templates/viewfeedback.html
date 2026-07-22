@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Feedback{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h2>Patient Feedback</h2>
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Rating</th>
+                    <th>Comments</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in userdict %}
+                <tr>
+                    <td>{{i.patient}}</td>
+                    <td>{{i.doctor}}</td>
+                    <td>
+                        <span style="color: #ffc107;">
+                            {% if i.rating == '5' %}★★★★★{% elif i.rating == '4' %}★★★★☆{% elif i.rating == '3' %}★★★☆☆{% elif i.rating == '2' %}★★☆☆☆{% else %}★☆☆☆☆{% endif %}
+                        </span>
+                    </td>
+                    <td>{{i.comments}}</td>
+                    <td>{{i.feedback_date}}</td>
+                    <td>
+                        <a href="{% url 'delfeedback' i.id %}" class="btn-action btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

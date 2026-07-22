@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Lab Tests{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h2>Lab Test Records</h2>
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Diagnosis</th>
+                    <th>Test Name</th>
+                    <th>Type</th>
+                    <th>Prescribed By</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Cost</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in userdict %}
+                <tr>
+                    <td>{{i.patient}}</td>
+                    <td>{{i.diagnosis}}</td>
+                    <td>{{i.test_name}}</td>
+                    <td>{{i.test_type}}</td>
+                    <td>{{i.prescribed_by}}</td>
+                    <td>{{i.test_date}}</td>
+                    <td><span class="badge bg-info text-dark">{{i.status}}</span></td>
+                    <td>${{i.cost}}</td>
+                    <td>
+                        <a href="{% url 'dellabtest' i.id %}" class="btn-action btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

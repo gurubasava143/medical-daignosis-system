@@ -1,0 +1,330 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment{% endblock %}
+
+{% block content %}
+<div class="hero-section" style="padding: 40px 0;">
+    <div class="glass-card" style="max-width: 600px;">
+        <h2 style="text-align: center; font-family: 'Roboto Condensed', sans-serif; font-size: 32px; font-weight: 700; margin-bottom: 10px;">Payment Details</h2>
+        <p style="text-align: center; color: rgba(255, 255, 255, 0.7); margin-bottom: 35px;">Secure payment for your medical services</p>
+
+        <!-- Status Alert Messages -->
+        {% if msg %}
+        <div style="background: rgba(46, 196, 182, 0.1); border: 1px solid #2ec4b6; color: #2ec4b6; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center; font-weight: 500;">
+            {{ msg }}
+        </div>
+        {% endif %}
+
+        <form method="POST" id="paymentForm">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="t1" class="form-label" style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.9);">Patient Name / Username</label>
+                <input type="text" id="t1" name="t1" class="form-control" style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; color: #ffffff; padding: 12px;" value="{{request.session.username}}" readonly required>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="t2" class="form-label" style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.9);">Diagnosis ID / Ref</label>
+                    <input type="text" id="t2" name="t2" class="form-control" style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; color: #ffffff; padding: 12px;" required autocomplete="off" placeholder="e.g. DIAG-894">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="t3" class="form-label" style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.9);">Lab Test ID / Ref</label>
+                    <input type="text" id="t3" name="t3" class="form-control" style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; color: #ffffff; padding: 12px;" required autocomplete="off" placeholder="e.g. LAB-104">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="t4" class="form-label" style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.9);">Amount (USD)</label>
+                    <input type="number" step="0.01" min="0.01" id="t4" name="t4" class="form-control" style="width: 100%; padding: 14px 16px 14px 48px; border: 2px solid #e0e7ee; border-radius: 12px; font-size: 15px; background: #f8fbff; transition: all 0.3s ease; outline: none; color: #333;" placeholder="0.00" required autocomplete="off">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="t5" class="form-label" style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.9);">Payment Date</label>
+                    <input type="date" id="t5" name="t5" class="form-control" style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; color: #ffffff; padding: 12px;" required readonly>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="t7" class="form-label" style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.9);">Transaction ID</label>
+                <input type="text" id="t7" name="t7" class="form-control" style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; color: #ffffff; padding: 12px;" placeholder="Enter Transaction ID manually" required autocomplete="off">
+            </div>
+
+            <!-- Beautiful Payment Method Selector -->
+            <div class="mb-4">
+                <label class="form-label" style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.9); margin-bottom: 12px; display: block;">Select Payment Method</label>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;">
+                    <div class="pay-method-card active" data-method="Credit Card" style="border: 2px solid #00e5ff; background: rgba(0, 229, 255, 0.08); padding: 15px 10px; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 229, 255, 0.15);">
+                        <i class="fa fa-credit-card" style="font-size: 24px; color: #00e5ff; margin-bottom: 8px; display: block;"></i>
+                        <span style="font-size: 12px; font-weight: 600;">Card</span>
+                    </div>
+                    <div class="pay-method-card" data-method="UPI" style="border: 2px solid rgba(255, 255, 255, 0.15); background: rgba(255, 255, 255, 0.03); padding: 15px 10px; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <i class="fa fa-mobile-alt" style="font-size: 24px; color: #a8dadc; margin-bottom: 8px; display: block;"></i>
+                        <span style="font-size: 12px; font-weight: 600;">UPI / QR</span>
+                    </div>
+                    <div class="pay-method-card" data-method="PayPal" style="border: 2px solid rgba(255, 255, 255, 0.15); background: rgba(255, 255, 255, 0.03); padding: 15px 10px; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <i class="fab fa-paypal" style="font-size: 24px; color: #ffb703; margin-bottom: 8px; display: block;"></i>
+                        <span style="font-size: 12px; font-weight: 600;">PayPal</span>
+                    </div>
+                    <div class="pay-method-card" data-method="Net Banking" style="border: 2px solid rgba(255, 255, 255, 0.15); background: rgba(255, 255, 255, 0.03); padding: 15px 10px; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <i class="fa fa-university" style="font-size: 24px; color: #457b9d; margin-bottom: 8px; display: block;"></i>
+                        <span style="font-size: 12px; font-weight: 600;">Banking</span>
+                    </div>
+                </div>
+
+                <!-- Hidden Input fields that map to views.py s6, s7, s8 inputs -->
+                <input type="hidden" id="t6" name="t6" value="Credit Card">
+                <input type="hidden" id="t8" name="t8" value="Completed">
+
+                <!-- Dynamic Payment Method Details Containers -->
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 22px; margin-top: 15px;">
+                    
+                    <!-- Credit Card Form -->
+                    <div id="cardSubform" class="payment-subform">
+                        <h5 style="font-size: 15px; font-weight: 600; color: #00e5ff; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px;">Enter Credit/Debit Card Details</h5>
+                        <div class="mb-3">
+                            <label class="form-label" style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">Cardholder Name</label>
+                            <input type="text" id="cardName" class="form-control card-input" style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: white;" placeholder="e.g. John Doe">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">Card Number</label>
+                            <input type="text" id="cardNumber" class="form-control card-input" style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: white; letter-spacing: 1.5px;" placeholder="xxxx xxxx xxxx xxxx" maxlength="19">
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <label class="form-label" style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">Expiration Date</label>
+                                <input type="text" id="cardExpiry" class="form-control card-input" style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: white;" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="col-6 mb-2">
+                                <label class="form-label" style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">CVV / Code</label>
+                                <input type="password" id="cardCVV" class="form-control card-input" style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: white;" placeholder="***" maxlength="3">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- UPI / QR code Subform -->
+                    <div id="upiSubform" class="payment-subform" style="display: none; text-align: center;">
+                        <h5 style="font-size: 15px; font-weight: 600; color: #a8dadc; margin-bottom: 12px; text-transform: uppercase;">Scan QR Code to Pay</h5>
+                        <div style="background: white; width: 150px; height: 150px; margin: 15px auto; padding: 10px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center;">
+                            <!-- Real Dynamic QR Code -->
+                            <img id="qrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=upi://pay?pa=medicare@okaxis%26pn=MediCare%26am=0.00%26cu=INR" alt="QR Code" style="width: 130px; height: 130px; border-radius: 4px; border: 1px solid #ddd;">
+                        </div>
+                        <p style="font-size: 11.5px; color: rgba(255, 255, 255, 0.7); margin-bottom: 15px;">Scan using BHIM, GooglePay, PhonePe or Paytm</p>
+                        <div class="form-group text-start">
+                            <label class="form-label" style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">Or Enter UPI Address (VPA)</label>
+                            <input type="text" id="upiVPA" class="form-control upi-input" style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: white;" placeholder="e.g. username@okhdfcbank" value="medicare@okaxis">
+                        </div>
+                    </div>
+
+                    <!-- PayPal Subform -->
+                    <div id="paypalSubform" class="payment-subform" style="display: none; text-align: center; padding: 15px 0;">
+                        <i class="fab fa-paypal" style="font-size: 48px; color: #ffb703; margin-bottom: 15px;"></i>
+                        <h5 style="font-size: 15px; font-weight: 600; color: white; margin-bottom: 10px;">Express Checkout with PayPal</h5>
+                        <p style="font-size: 12px; color: rgba(255, 255, 255, 0.7); margin-bottom: 22px;">Pay securely using your PayPal balance, linked bank account, or credit card.</p>
+                        <div style="background: #ffb703; color: #003049; padding: 12px 25px; border-radius: 25px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 183, 3, 0.3); transition: all 0.3s ease;" onclick="alert('Demo PayPal transaction initialized! Click Process Payment to submit.')">
+                            <i class="fab fa-paypal"></i>
+                            <span>PayPal Checkout</span>
+                        </div>
+                    </div>
+
+                    <!-- Net Banking subform -->
+                    <div id="bankingSubform" class="payment-subform" style="display: none;">
+                        <h5 style="font-size: 15px; font-weight: 600; color: #457b9d; margin-bottom: 15px; text-transform: uppercase;">Select Your Bank</h5>
+                        <div class="mb-2">
+                            <select id="bankSelector" class="form-control banking-input" style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: white; padding: 10px;">
+                                <option value="" disabled selected>-- Choose Bank --</option>
+                                <option value="HDFC Bank">HDFC Bank</option>
+                                <option value="ICICI Bank">ICICI Bank</option>
+                                <option value="State Bank of India">State Bank of India</option>
+                                <option value="Axis Bank">Axis Bank</option>
+                                <option value="Citibank">Citibank</option>
+                                <option value="Chase Bank">Chase Bank / US</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" style="width: 100%; padding: 15px; margin-top: 10px; background: linear-gradient(135deg, #00e5ff, #0077b6); border: none; border-radius: 12px; color: #ffffff; font-weight: 600; text-transform: uppercase; box-shadow: 0 4px 20px rgba(0, 229, 255, 0.25);">Process Secure Payment</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById("paymentForm");
+        const amountInput = document.getElementById("t4");
+        
+        // Auto Populate Current Date (Format: YYYY-MM-DD)
+        const dateInput = document.getElementById("t5");
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        let mm = today.getMonth() + 1; // Month is 0-indexed
+        let dd = today.getDate();
+        if (mm < 10) mm = '0' + mm;
+        if (dd < 10) dd = '0' + dd;
+        dateInput.value = `${yyyy}-${mm}-${dd}`;
+
+        // Transaction ID Input Reference
+        const txnInput = document.getElementById("t7");
+
+        // Payment Method Card Selector Logic
+        const methodCards = document.querySelectorAll(".pay-method-card");
+        const methodValueInput = document.getElementById("t6");
+        const subforms = {
+            "Credit Card": document.getElementById("cardSubform"),
+            "UPI": document.getElementById("upiSubform"),
+            "PayPal": document.getElementById("paypalSubform"),
+            "Net Banking": document.getElementById("bankingSubform")
+        };
+
+        methodCards.forEach(card => {
+            card.addEventListener("click", function() {
+                // Remove active classes
+                methodCards.forEach(c => {
+                    c.classList.remove("active");
+                    c.style.borderColor = "rgba(255, 255, 255, 0.15)";
+                    c.style.background = "rgba(255, 255, 255, 0.03)";
+                    c.style.boxShadow = "none";
+                });
+                
+                // Add active classes
+                const selectedMethod = card.getAttribute("data-method");
+                card.classList.add("active");
+                card.style.borderColor = "#00e5ff";
+                card.style.background = "rgba(0, 229, 255, 0.08)";
+                card.style.boxShadow = "0 4px 15px rgba(0, 229, 255, 0.15)";
+                
+                // Set hidden input value
+                methodValueInput.value = selectedMethod;
+
+                // Hide all subforms and show active one
+                for (const key in subforms) {
+                    if (key === selectedMethod) {
+                        subforms[key].style.display = "block";
+                    } else {
+                        subforms[key].style.display = "none";
+                    }
+                }
+            });
+        });
+
+        // Live Credit Card formatting helper
+        const cardNumber = document.getElementById("cardNumber");
+        cardNumber.addEventListener("input", function(e) {
+            let val = cardNumber.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            let formatted = "";
+            for (let i = 0; i < val.length; i++) {
+                if (i > 0 && i % 4 === 0) formatted += " ";
+                formatted += val[i];
+            }
+            cardNumber.value = formatted;
+        });
+
+        const cardExpiry = document.getElementById("cardExpiry");
+        cardExpiry.addEventListener("input", function(e) {
+            let val = cardExpiry.value.replace(/\//g, '').replace(/[^0-9]/gi, '');
+            if (val.length >= 2) {
+                cardExpiry.value = val.substring(0, 2) + "/" + val.substring(2, 4);
+            } else {
+                cardExpiry.value = val;
+            }
+        });
+
+        // Numeric constraint for amount, expiry years, and card values
+        const cardCVV = document.getElementById("cardCVV");
+        cardCVV.addEventListener("input", function() {
+            cardCVV.value = cardCVV.value.replace(/[^0-9]/g, '');
+        });
+
+        // Form Submit Validation Checks
+        form.addEventListener("submit", function(e) {
+            // Check valid positive amount
+            const amountVal = parseFloat(amountInput.value);
+            if (isNaN(amountVal) || amountVal <= 0) {
+                e.preventDefault();
+                alert("Please enter a valid payment amount greater than zero.");
+                amountInput.focus();
+                return;
+            }
+
+            const currentMethod = methodValueInput.value;
+
+            if (currentMethod === "Credit Card") {
+                const cardName = document.getElementById("cardName").value.trim();
+                const cardNum = cardNumber.value.replace(/\s/g, '');
+                const cardExp = cardExpiry.value;
+                const cvv = cardCVV.value;
+
+                if (cardName.length < 3) {
+                    e.preventDefault();
+                    alert("Please enter the cardholder name.");
+                    return;
+                }
+                if (!/^\d{16}$/.test(cardNum)) {
+                    e.preventDefault();
+                    alert("Please enter a valid 16-digit card number.");
+                    cardNumber.focus();
+                    return;
+                }
+                if (!/^\d{2}\/\d{2}$/.test(cardExp)) {
+                    e.preventDefault();
+                    alert("Please enter the expiry date in MM/YY format.");
+                    cardExpiry.focus();
+                    return;
+                }
+                if (!/^\d{3}$/.test(cvv)) {
+                    e.preventDefault();
+                    alert("Please enter a valid 3-digit CVV number.");
+                    cardCVV.focus();
+                    return;
+                }
+            } else if (currentMethod === "UPI") {
+                const upiVPA = document.getElementById("upiVPA").value.trim();
+                if (upiVPA.length === 0 || !upiVPA.includes("@")) {
+                    e.preventDefault();
+                    alert("Please enter a valid UPI address (e.g. user@bank).");
+                    return;
+                }
+            } else if (currentMethod === "Net Banking") {
+                const bank = document.getElementById("bankSelector").value;
+                if (bank === "") {
+                    e.preventDefault();
+                    alert("Please select your banking institution.");
+                    return;
+                }
+            }
+        });
+
+        // Dynamic QR Code generation helper
+        const qrImg = document.getElementById("qrCodeImg");
+        const upiVPAInput = document.getElementById("upiVPA");
+        const patientNameInput = document.getElementById("t1");
+
+        function updateQRCode() {
+            const amount = parseFloat(amountInput.value) || 0.00;
+            const upiVpa = upiVPAInput.value.trim() || "medicare@okaxis";
+            const patientName = patientNameInput.value.trim() || "Patient";
+            const txnId = txnInput.value || "TXN-DEMO";
+            
+            // Construct standard UPI deep-link URI: upi://pay?pa=address&pn=name&am=amount&tn=txnid&cu=INR
+            const upiUri = `upi://pay?pa=${encodeURIComponent(upiVpa)}&pn=${encodeURIComponent("MediCare Hospital - " + patientName)}&am=${amount.toFixed(2)}&tn=${encodeURIComponent(txnId)}&cu=INR`;
+            
+            // Update the QR image source to a dynamically generated QR code via public server API
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(upiUri)}`;
+        }
+
+        // Generate QR code dynamically when user changes amount, UPI or transaction ID input
+        amountInput.addEventListener("input", updateQRCode);
+        upiVPAInput.addEventListener("input", updateQRCode);
+        txnInput.addEventListener("input", updateQRCode);
+        
+        // Initial load to generate starting QR code
+        updateQRCode();
+    });
+</script>
+    </div>
+</div>
+{% endblock %}

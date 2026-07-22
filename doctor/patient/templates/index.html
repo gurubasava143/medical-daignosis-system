@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Medical Diagnosis System{% endblock %}
+
+{% block navbar %}
+<div class="navbar-section">
+    <div class="navbar-inner">
+        <a href="{% url 'showindex' %}" class="navbar-brand-custom">
+            <i class="fa fa-heartbeat"></i>
+            <h1>Medical Diagnosis System</h1>
+        </a>
+        <div class="navbar-links">
+            <a href="{% url 'showindex' %}" class="active">Home</a>
+            <a href="{% url 'logcheck' %}">Login</a>
+            <a href="{% url 'insertuserreg' %}" class="nav-btn">Register</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section" style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 60px 30px;">
+    <div class="hero-content" style="max-width: 1200px; width: 100%; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+        <div class="hero-text" style="max-width: 600px; flex: 1; min-width: 300px; animation: fadeInUp 0.8s ease forwards;">
+            <h2 style="font-family: 'Roboto Condensed', sans-serif; font-size: 52px; font-weight: 700; color: #ffffff; line-height: 1.15; margin-bottom: 20px;">Advanced <span style="color: #00e5ff;">Medical Diagnosis</span> System</h2>
+            <p style="color: rgba(255, 255, 255, 0.75); font-size: 17px; line-height: 1.7; margin-bottom: 35px;">Experience the future of healthcare with our medical diagnosis platform. Get accurate symptom analysis, by the experience doctors health assessments, and personalized treatment recommendations — all in one place.</p>
+            <div class="hero-buttons">
+                {% if not request.session.username %}
+                    <a href="{% url 'logcheck' %}" class="nav-btn" style="padding: 14px 36px; font-size: 15px;">Get Started</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="features-section" style="padding: 60px 30px;">
+    <div class="features-header" style="text-align: center; margin-bottom: 60px;">
+        <h5 style="color: #00e5ff; font-size: 14px; text-transform: uppercase; letter-spacing: 3px; font-weight: 600; margin-bottom: 10px;">Our Services</h5>
+        <h2 style="font-family: 'Roboto Condensed', sans-serif; font-size: 38px; font-weight: 700; color: #ffffff;">Medical Diagnosis System</h2>
+    </div>
+    <div class="features-container" style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: center;">
+        <div class="feature-card" style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 20px; padding: 40px 30px; margin: 15px; width: calc(33.333% - 30px); min-width: 280px; text-align: center; transition: all 0.4s ease;">
+            <div class="feature-icon" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(0, 119, 182, 0.2)); display: flex; align-items: center; justify-content: center; margin: 0 auto 25px;">
+                <i class="fa fa-microscope" style="font-size: 32px; color: #00e5ff;"></i>
+            </div>
+            <h4 style="color: #ffffff; margin-bottom: 12px;">Health Guidance & Next Steps</h4>
+            <p style="color: rgba(255, 255, 255, 0.65); font-size: 14px;">Get clear recommendations on when to seek medical help, lifestyle tips, and links to trusted medical guiders.</p>
+        </div>
+        <div class="feature-card" style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 20px; padding: 40px 30px; margin: 15px; width: calc(33.333% - 30px); min-width: 280px; text-align: center;">
+            <div class="feature-icon" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(0, 119, 182, 0.2)); display: flex; align-items: center; justify-content: center; margin: 0 auto 25px;">
+                <i class="fa fa-laptop-medical" style="font-size: 32px; color: #00e5ff;"></i>
+            </div>
+            <h4 style="color: #ffffff; margin-bottom: 12px;">A Standardized Medical Reports</h4>
+            <p style="color: rgba(255, 255, 255, 0.65); font-size: 14px;">Receive detailed,  structured reports generated from medical references.</p>
+        </div>
+        <div class="feature-card" style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 20px; padding: 40px 30px; margin: 15px; width: calc(33.333% - 30px); min-width: 280px; text-align: center;">
+            <div class="feature-icon" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(0, 119, 182, 0.2)); display: flex; align-items: center; justify-content: center; margin: 0 auto 25px;">
+                <i class="fa fa-user-md" style="font-size: 32px; color: #00e5ff;"></i>
+            </div>
+            <h4 style="color: #ffffff; margin-bottom: 12px;">Expert Consultation</h4>
+            <p style="color: rgba(255, 255, 255, 0.65); font-size: 14px;">Connect with verified medical specialists for follow-up consultations and personalized plans.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}

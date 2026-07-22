@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block navbar %}
+<div class="navbar-section">
+    <div class="navbar-inner">
+        <a href="{% url 'showindex' %}" class="navbar-brand-custom">
+            <i class="fa fa-heartbeat"></i>
+            <h1>Medical Diagnosis System</h1>
+        </a>
+        <div class="navbar-links">
+            <a href="{% url 'showindex' %}">Home</a>
+            <a href="{% url 'logcheck' %}" class="active">Login</a>
+            <a href="{% url 'insertuserreg' %}" class="nav-btn">Register</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* --- Login Container --- */
+    .login-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 30px;
+    }
+
+    .login-container {
+        width: 100%;
+        max-width: 900px;
+        display: flex;
+        overflow: hidden;
+        border-radius: 24px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+        background: #ffffff;
+    }
+
+    /* --- Left Panel --- */
+    .login-left {
+        flex: 1;
+        background: linear-gradient(135deg, #0077b6, #00b4d8, #00e5ff);
+        padding: 60px 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    .login-left-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 25px;
+    }
+
+    .login-left-icon i {
+        font-size: 36px;
+    }
+
+    .login-left h2 {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    /* --- Right Panel (Form) --- */
+    .login-right {
+        flex: 1;
+        padding: 60px 45px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: #ffffff;
+    }
+
+    .login-right h3 {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: #003764;
+        margin-bottom: 8px;
+    }
+
+    .login-right .subtitle {
+        color: #6c757d;
+        font-size: 14px;
+        margin-bottom: 35px;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #003764;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .input-wrapper i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #0096c7;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 14px 16px 14px 48px;
+        border: 2px solid #e0e7ee;
+        border-radius: 12px;
+        font-size: 15px;
+        background: #f8fbff;
+        transition: all 0.3s ease;
+        outline: none;
+        color: #333;
+    }
+
+    .form-group input:focus {
+        border-color: #00b4d8;
+        background: #ffffff;
+    }
+
+    .btn-login {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #0077b6, #00b4d8);
+        color: #ffffff;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 119, 182, 0.3);
+    }
+
+    .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 119, 182, 0.45);
+    }
+
+    @media (max-width: 768px) {
+        .login-container { flex-direction: column; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-container">
+        <!-- Left Panel -->
+        <div class="login-left">
+            <div class="login-left-icon">
+                <i class="fa fa-heartbeat"></i>
+            </div>
+            <h2>Welcome Back!</h2>
+            <p>Access your medical dashboard and manage your health records securely.</p>
+        </div>
+        <!-- Right Panel -->
+        <div class="login-right">
+            <h3>Sign In</h3>
+            <p class="subtitle">Enter your credentials to access your account</p>
+
+            {% if msg %}
+            <div style="background: rgba(255, 0, 0, 0.1); border: 1px solid #ff4d4d; color: #ff4d4d; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center;">
+                {{ msg }}
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fa fa-envelope"></i>
+                        <input type="email" id="username" name="t1" placeholder="Enter Email Address" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <i class="fa fa-lock"></i>
+                        <input type="password" id="password" name="t2" placeholder="Enter password" required>
+                    </div>
+                </div>
+                
+                <div style="text-align: right; margin-bottom: 20px;">
+                    <a href="{% url 'forgot_password' %}" style="font-size: 13px; color: #0096c7; text-decoration: none; font-weight: 500;">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-login">Sign In</button>
+            </form>
+            <div style="text-align: center; margin-top: 25px; font-size: 14px; color: #6c757d;">
+                Don't have an account? <a href="{% url 'insertuserreg' %}" style="color: #0096c7; font-weight: 600; text-decoration: none;">Register Now</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

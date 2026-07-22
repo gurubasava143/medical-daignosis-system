@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Doctor Profiles{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h2>Doctor Profiles</h2>
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Specialization</th>
+                    <th>Qualification</th>
+                    <th>Experience</th>
+                    <th>Hospital</th>
+                    <th>Fee</th>
+                    <th>Available Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in userdict %}
+                <tr>
+                    <td>{{i.user}}</td>
+                    <td>{{i.specialization}}</td>
+                    <td>{{i.qualification}}</td>
+                    <td>{{i.experience_years}} Years</td>
+                    <td>{{i.hospital_name}}</td>
+                    <td>${{i.consultation_fee}}</td>
+                    <td>{{i.available_time}}</td>
+                    <td>
+                        <a href="{% url 'deldoctor' i.id %}" class="btn-action btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

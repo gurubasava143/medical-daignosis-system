@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Doctor Dashboard{% endblock %}
+{% block background_image %}{% static 'doctor_bg.png' %}{% endblock %}
+
+{% block content %}
+<div class="hero-section" style="min-height: 70vh; display: flex; align-items: center; justify-content: center; padding: 40px 30px;">
+    <div class="glass-card" style="max-width: 800px; text-align: center;">
+        <div style="font-size: 60px; color: #00e5ff; margin-bottom: 20px;">
+            <i class="fa fa-user-md"></i>
+        </div>
+        <h2>Welcome, Dr. {{request.session.username}}</h2>
+        <p style="font-size: 18px; color: rgba(255, 255, 255, 0.8);">Patient Care and Diagnosis Portal</p>
+        <div style="display: flex; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
+            <a href="{% url 'showmpatient' %}" class="nav-btn" style="margin: 10px;">View Patients</a>
+            <a href="{% url 'daignosis1' %}" class="nav-btn" style="margin: 10px;">Add Diagnosis</a>
+            <a href="{% url 'insertprescript' %}" class="nav-btn" style="margin: 10px;">Add Prescription</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

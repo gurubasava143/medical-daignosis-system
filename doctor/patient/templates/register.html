@@ -1,0 +1,507 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register{% endblock %}
+
+{% block navbar %}
+<div class="navbar-section">
+    <div class="navbar-inner">
+        <a href="{% url 'showindex' %}" class="navbar-brand-custom">
+            <i class="fa fa-heartbeat"></i>
+            <h1>Medical Diagnosis System</h1>
+        </a>
+        <div class="navbar-links">
+            <a href="{% url 'showindex' %}">Home</a>
+            <a href="{% url 'logcheck' %}">Login</a>
+            <a href="{% url 'insertuserreg' %}" class="nav-btn">Register</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* --- Register Container --- */
+    .register-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 30px;
+    }
+
+    .register-container {
+        width: 100%;
+        max-width: 900px;
+        display: flex;
+        overflow: hidden;
+        border-radius: 24px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+        background: #ffffff;
+    }
+
+    /* --- Left Panel --- */
+    .register-left {
+        width: 300px;
+        background: linear-gradient(135deg, #0077b6, #00b4d8, #00e5ff);
+        padding: 60px 35px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    .register-left-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 25px;
+    }
+
+    .register-left-icon i {
+        font-size: 36px;
+    }
+
+    .register-left h2 {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .register-left ul {
+        list-style: none;
+        padding: 0;
+        text-align: left;
+        width: 100%;
+    }
+
+    .register-left ul li {
+        font-size: 13px;
+        padding: 6px 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .register-left ul li i {
+        margin-right: 10px;
+    }
+
+    /* --- Right Panel (Form) --- */
+    .register-right {
+        flex: 1;
+        padding: 40px 45px;
+        background: #ffffff;
+    }
+
+    .register-right h3 {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: #003764;
+        margin-bottom: 8px;
+    }
+
+    .register-right .subtitle {
+        color: #6c757d;
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: #003764;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .input-wrapper i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #0096c7;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 10px 14px 10px 40px;
+        border: 2px solid #e0e7ee;
+        border-radius: 10px;
+        font-size: 14px;
+        background: #f8fbff;
+        transition: all 0.3s ease;
+        outline: none;
+        color: #333;
+    }
+
+    .form-group textarea {
+        min-height: 60px;
+    }
+
+    .btn-register {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #0077b6, #00b4d8);
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 119, 182, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .register-container {
+            flex-direction: column;
+        }
+
+        .register-left {
+            width: 100%;
+        }
+    }
+
+    /* Input Validation & Status feedback */
+    .error-message {
+        color: #e63946;
+        font-size: 11.5px;
+        margin-top: 5px;
+        display: none;
+        font-weight: 500;
+    }
+
+    .form-group input.is-invalid,
+    .form-group textarea.is-invalid,
+    .form-group select.is-invalid {
+        border-color: #e63946 !important;
+        background: #fff8f8 !important;
+    }
+
+    .form-group input.is-valid,
+    .form-group textarea.is-valid,
+    .form-group select.is-valid {
+        border-color: #2a9d8f !important;
+        background: #f4fbf9 !important;
+    }
+
+    .strength-meter {
+        height: 6px;
+        width: 100%;
+        background-color: #e0e7ee;
+        border-radius: 3px;
+        margin-top: 8px;
+        overflow: hidden;
+        display: none;
+    }
+
+    .strength-bar {
+        height: 100%;
+        width: 0%;
+        transition: all 0.3s ease;
+    }
+
+    .strength-text {
+        font-size: 11px;
+        font-weight: 600;
+        margin-top: 4px;
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-wrapper">
+    <div class="register-container">
+        <!-- Left Panel -->
+        <div class="register-left">
+            <div class="register-left-icon">
+                <i class="fa fa-user-plus"></i>
+            </div>
+            <h2>Join Us</h2>
+            <p>Create your account to unlock advanced diagnosis features.</p>
+            <ul>
+                <li><i class="fa fa-check"></i> Advanced Medical Diagnosis</li>
+                <li><i class="fa fa-check"></i> Secure Health Records</li>
+                <li><i class="fa fa-check"></i> Expert Consultations</li>
+            </ul>
+        </div>
+        <!-- Right Panel -->
+        <div class="register-right">
+            <h3>Create Account</h3>
+            <p class="subtitle">Fill in your details to get started</p>
+
+            {% if msg %}
+            <div
+                style="background: rgba(0, 229, 255, 0.1); border: 1px solid #00e5ff; color: #00e5ff; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center;">
+                {{ msg }}
+            </div>
+            {% endif %}
+
+            <form method="post" id="regForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="t1">Full Name</label>
+                    <div class="input-wrapper">
+                        <i class="fa fa-user"></i>
+                        <input type="text" id="t1" name="t1" placeholder="Enter your name" required autocomplete="off">
+                    </div>
+                    <div class="error-message" id="err_t1">Name should be at least 3 characters and contain only
+                        letters.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="t2">Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fa fa-envelope"></i>
+                        <input type="email" id="t2" name="t2" placeholder="Enter your email" required
+                            autocomplete="off">
+                    </div>
+                    <div class="error-message" id="err_t2">Please enter a valid email address (e.g. name@domain.com).
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="t3">Password</label>
+                    <div class="input-wrapper">
+                        <i class="fa fa-lock"></i>
+                        <input type="password" id="t3" name="t3" placeholder="Create password" required>
+                    </div>
+                    <div class="strength-meter" id="strengthMeter">
+                        <div class="strength-bar" id="strengthBar"></div>
+                    </div>
+                    <div class="strength-text" id="strengthText">Password Strength: Weak</div>
+                    <div class="error-message" id="err_t3">Password must be at least 8 characters and include uppercase,
+                        lowercase, a number, and a special character.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="t4">Contact Number</label>
+                    <div class="input-wrapper">
+                        <i class="fa fa-phone"></i>
+                        <input type="text" id="t4" name="t4" placeholder="Enter contact number (10 digits)" required
+                            autocomplete="off">
+                    </div>
+                    <div class="error-message" id="err_t4">Contact number must be exactly 10 digits and numeric.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="t5">City</label>
+                    <div class="input-wrapper">
+                        <i class="fa fa-city"></i>
+                        <input type="text" id="t5" name="t5" placeholder="Enter your city" required autocomplete="off">
+                    </div>
+                    <div class="error-message" id="err_t5">City must be at least 2 characters and contain only letters.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="t6">Address</label>
+                    <div class="input-wrapper">
+                        <i class="fa fa-map-marker-alt"></i>
+                        <textarea id="t6" name="t6" placeholder="Enter your address (at least 10 characters)"
+                            required></textarea>
+                    </div>
+                    <div class="error-message" id="err_t6">Address must be at least 10 characters long.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="t7">Role</label>
+                    <div class="input-wrapper">
+                        <i class="fa fa-user-tag"></i>
+                        <select id="t7" name="t7" required>
+                            <option value="" disabled selected>Select role</option>
+                            <option value="patient">Patient</option>
+                            <option value="doctor">Doctor</option>
+
+                        </select>
+                    </div>
+                    <div class="error-message" id="err_t7">Please select a valid role.</div>
+                </div>
+
+                <button type="submit" class="btn-register" id="submitBtn" style="opacity: 0.65; cursor: not-allowed;"
+                    disabled>Create Account</button>
+            </form>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const form = document.getElementById("regForm");
+                    const submitBtn = document.getElementById("submitBtn");
+
+                    const inputs = {
+                        t1: {
+                            el: document.getElementById("t1"),
+                            err: document.getElementById("err_t1"),
+                            validate: (val) => /^[a-zA-Z\s]{3,40}$/.test(val.trim())
+                        },
+                        t2: {
+                            el: document.getElementById("t2"),
+                            err: document.getElementById("err_t2"),
+                            validate: (val) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(val.trim())
+                        },
+                        t3: {
+                            el: document.getElementById("t3"),
+                            err: document.getElementById("err_t3"),
+                             validate: function (val) {
+                                 // Simple validation: accept any non-empty password
+                                 return val.trim().length > 0;
+                             }
+                        },
+                        t4: {
+                            el: document.getElementById("t4"),
+                            err: document.getElementById("err_t4"),
+                            validate: (val) => /^\d{10}$/.test(val.trim())
+                        },
+                        t5: {
+                            el: document.getElementById("t5"),
+                            err: document.getElementById("err_t5"),
+                            validate: (val) => /^[a-zA-Z\s]{2,30}$/.test(val.trim())
+                        },
+                        t6: {
+                            el: document.getElementById("t6"),
+                            err: document.getElementById("err_t6"),
+                            validate: (val) => val.trim().length >= 10
+                        },
+                        t7: {
+                            el: document.getElementById("t7"),
+                            err: document.getElementById("err_t7"),
+                            validate: (val) => val !== "" && val !== null
+                        }
+                    };
+
+                    // Setup event listeners
+                    for (const key in inputs) {
+                        const inputObj = inputs[key];
+                        const eventType = inputObj.el.tagName === "SELECT" ? "change" : "input";
+
+                        inputObj.el.addEventListener(eventType, function () {
+                            validateField(key);
+                            if (key === "t3") {
+                                updatePasswordStrength(inputObj.el.value);
+                            }
+                            checkFormValidity();
+                        });
+
+                        inputObj.el.addEventListener("blur", function () {
+                            validateField(key);
+                            checkFormValidity();
+                        });
+                    }
+
+                    function validateField(key) {
+                        const field = inputs[key];
+                        const isValid = field.validate(field.el.value);
+                        if (isValid) {
+                            field.el.classList.remove("is-invalid");
+                            field.el.classList.add("is-valid");
+                            field.err.style.display = "none";
+                        } else {
+                            field.el.classList.remove("is-valid");
+                            field.el.classList.add("is-invalid");
+                            field.err.style.display = "block";
+                        }
+                        return isValid;
+                    }
+
+                    function updatePasswordStrength(val) {
+                        const strengthMeter = document.getElementById("strengthMeter");
+                        const strengthBar = document.getElementById("strengthBar");
+                        const strengthText = document.getElementById("strengthText");
+
+                        if (val.length === 0) {
+                            strengthMeter.style.display = "none";
+                            strengthText.style.display = "none";
+                            return;
+                        }
+
+                        strengthMeter.style.display = "block";
+                        strengthText.style.display = "block";
+
+                        let score = 0;
+                        if (val.length >= 8) score++;
+                        if (/[A-Z]/.test(val)) score++;
+                        if (/[a-z]/.test(val)) score++;
+                        if (/\d/.test(val)) score++;
+                        if (/[@$!%*?&#]/.test(val)) score++;
+
+                        let color = "#e63946"; // Red (Weak)
+                        let text = "Weak";
+                        let width = "20%";
+
+                        if (score >= 4 && val.length >= 8) {
+                            color = "#2a9d8f"; // Green (Strong)
+                            text = "Strong";
+                            width = "100%";
+                        } else if (score >= 2 && val.length >= 6) {
+                            color = "#f4a261"; // Orange (Medium)
+                            text = "Medium";
+                            width = "60%";
+                        }
+
+                        strengthBar.style.backgroundColor = color;
+                        strengthBar.style.width = width;
+                        strengthText.innerText = "Password Strength: " + text;
+                        strengthText.style.color = color;
+                    }
+
+                    function checkFormValidity() {
+                        let allValid = true;
+                        for (const key in inputs) {
+                            const field = inputs[key];
+                            if (!field.validate(field.el.value)) {
+                                allValid = false;
+                            }
+                        }
+                        if (allValid) {
+                            submitBtn.disabled = false;
+                            submitBtn.style.opacity = "1";
+                            submitBtn.style.cursor = "pointer";
+                        } else {
+                            submitBtn.disabled = true;
+                            submitBtn.style.opacity = "0.65";
+                            submitBtn.style.cursor = "not-allowed";
+                        }
+                    }
+
+                    // Intercept Form Submit to double check
+                    form.addEventListener("submit", function (e) {
+                        let formIsValid = true;
+                        for (const key in inputs) {
+                            if (!validateField(key)) {
+                                formIsValid = false;
+                            }
+                        }
+                        if (!formIsValid) {
+                            e.preventDefault();
+                            alert("Please correct all errors in the form before submitting.");
+                        }
+                    });
+                });
+            </script>
+            <div style="text-align: center; margin-top: 22px; font-size: 14px; color: #6c757d;">
+                Already have an account? <a href="{% url 'logcheck' %}"
+                    style="color: #0096c7; font-weight: 600; text-decoration: none;">Sign In</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

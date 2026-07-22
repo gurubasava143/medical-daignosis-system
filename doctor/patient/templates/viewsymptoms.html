@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Symptoms{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h2>Symptom Records</h2>
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Symptom</th>
+                    <th>Severity</th>
+                    <th>Duration</th>
+                    <th>Body Part</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in userdict %}
+                <tr>
+                    <td>{{i.patient}}</td>
+                    <td>{{i.symptom_name}}</td>
+                    <td>{{i.severity}}</td>
+                    <td>{{i.duration}}</td>
+                    <td>{{i.body_part}}</td>
+                    <td>{{i.recorded_date}}</td>
+                    <td>
+                        <a href="{% url 'insertprescript' %}?patient={{i.patient}}&symptom={{i.symptom_name}}" class="nav-btn" style="padding: 5px 15px; font-size: 11px;">Add Prescription</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

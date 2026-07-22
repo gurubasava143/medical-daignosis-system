@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Medical History{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h2>Medical History Records</h2>
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Conditions</th>
+                    <th>Surgeries</th>
+                    <th>Allergies</th>
+                    <th>Medications</th>
+                    <th>Family History</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in userdict %}
+                <tr>
+                    <td>{{i.patient}}</td>
+                    <td>{{i.existing_conditions}}</td>
+                    <td>{{i.past_surgeries}}</td>
+                    <td>{{i.allergies}}</td>
+                    <td>{{i.current_medications}}</td>
+                    <td>{{i.family_medical_history}}</td>
+                    <td>
+                        <a href="{% url 'delmedicalhistory' i.id %}" class="btn-action btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Lab Results{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h2>Lab Result Records</h2>
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Lab Test</th>
+                    <th>Result Value</th>
+                    <th>Normal Range</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Technician</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in userdict %}
+                <tr>
+                    <td>{{i.lab_test}}</td>
+                    <td>{{i.result_value}}</td>
+                    <td>{{i.normal_range}}</td>
+                    <td>{{i.result_status}}</td>
+                    <td>{{i.report_date}}</td>
+                    <td>{{i.technician_name}}</td>
+                    <td>
+                        <a href="{% url 'dellabresult' i.id %}" class="btn-action btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

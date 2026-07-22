@@ -1,0 +1,39 @@
+/* validation.css */
+/* Styles for inline validation messages */
+.validation-msg {
+    display: block;
+    font-size: 0.85rem;
+    margin-top: 4px;
+    color: #ff6b6b;
+    /* error color */
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+input.valid+.validation-msg,
+select.valid+.validation-msg,
+textarea.valid+.validation-msg {
+    color: #4caf50;
+    /* success color */
+}
+
+input.invalid+.validation-msg,
+select.invalid+.validation-msg,
+textarea.invalid+.validation-msg {
+    opacity: 1;
+}
+
+/* Green/red border cues */
+input.valid,
+select.valid,
+textarea.valid {
+    border-color: #4caf50 !important;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+}
+
+input.invalid,
+select.invalid,
+textarea.invalid {
+    border-color: #ff6b6b !important;
+    box-shadow: 0 0 5px rgba(255, 107, 107, 0.4);
+}

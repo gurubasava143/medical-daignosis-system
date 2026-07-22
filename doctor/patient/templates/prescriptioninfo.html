@@ -1,0 +1,653 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Prescription Info{% endblock %}
+
+{% block extra_head %}
+<style>
+    .form-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 30px;
+    }
+
+    .form-glass-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 24px;
+        padding: 45px;
+        width: 100%;
+        max-width: 550px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        color: #ffffff;
+    }
+
+    .form-glass-card h2 {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    .form-glass-card p {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 35px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 14px 20px;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        color: #ffffff;
+        transition: all 0.3s ease;
+    }
+
+    .form-control-custom:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.12);
+        border-color: #00e5ff;
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 15px;
+        margin-top: 20px;
+        background: linear-gradient(135deg, #00e5ff, #0077b6);
+        border: none;
+        border-radius: 12px;
+        color: #ffffff;
+        font-weight: 600;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(0, 229, 255, 0.2);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(0, 229, 255, 0.35);
+    }
+
+    .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .error-msg {
+        color: #ff4d4d;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-section">
+    <div class="form-glass-card" style="max-width: 650px;">
+        <h2>Prescription Info</h2>
+        {% if symptom %}
+        <div
+            style="background: rgba(0, 229, 255, 0.15); border: 1px solid #00e5ff; padding: 10px; border-radius: 12px; margin-bottom: 25px; text-align: center; font-size: 13px;">
+            <i class="fa fa-magic" style="margin-right: 8px;"></i> Suggested based on symptoms:
+            <strong>{{symptom}}</strong>
+        </div>
+        {% endif %}
+        <p>Complete the medical prescription details</p>
+
+        {% if msg %}
+        <div
+            style="background: rgba(0, 229, 255, 0.1); border: 1px solid #00e5ff; color: #00e5ff; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center;">
+            {{ msg }}
+        </div>
+        {% endif %}
+
+        <form method="POST" id="prescriptionForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="t1">Diagnosis / Patient</label>
+                <input type="text" id="t1" name="t1" class="form-control-custom"
+                    value="{{patient_name}}{% if symptom %} - {{symptom}}{% endif %}" required autocomplete="off">
+                <div class="error-msg" id="err_t1"
+                    style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none;">Diagnosis or Patient
+                    reference is required (min 3 characters).</div>
+            </div>
+
+            <!-- Medicines Container -->
+            <div id="medicinesContainer">
+                {% if prefilled_medicines %}
+                {% for med in prefilled_medicines %}
+                <div class="medicine-item"
+                    style="border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px; padding: 20px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.03);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h4 style="margin: 0; color: #00e5ff; font-size: 16px;">Medicine #{{ forloop.counter }}</h4>
+                        <button type="button" class="btn-remove-medicine"
+                            style="background: rgba(255, 77, 77, 0.1); border: 1px solid rgba(255, 77, 77, 0.3); color: #ff4d4d; padding: 4px 8px; border-radius: 6px; font-size: 12px; cursor: pointer; display: {% if forloop.first and prefilled_medicines|length == 1 %}none{% else %}block{% endif %};"
+                            onclick="removeMedicine(this)">
+                            <i class="fa fa-trash"></i> Remove
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Medicine Name</label>
+                        <input type="text" name="t2" class="form-control-custom medicine-name"
+                            value="{{ med.medicine_name }}" required autocomplete="off">
+                        <div class="error-msg" style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none;">
+                            Medicine name must be at least 3 characters.</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label>Dosage</label>
+                            <input type="text" name="t3" class="form-control-custom medicine-dosage"
+                                value="{{ med.dosage }}" required autocomplete="off">
+                            <div class="error-msg"
+                                style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none;">Dosage must be
+                                at least 2 characters.</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <input type="text" name="t5" class="form-control-custom medicine-duration"
+                                value="{{ med.duration }}" required autocomplete="off">
+                            <div class="error-msg"
+                                style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none;">Duration must
+                                be at least 2 characters.</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Frequency (Morning - Afternoon - Night)</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div style="flex: 1; text-align: center;">
+                                <span
+                                    style="font-size: 10px; color: rgba(255,255,255,0.6); display: block; margin-bottom: 4px;">Morning</span>
+                                <select class="form-control-custom freq-morning"
+                                    style="padding: 10px; text-align: center;" onchange="updateFrequency(this)">
+                                    <option value="0">0</option>
+                                    <option value="1" selected>1</option>
+
+                            </div>
+                            <div style="font-size: 18px; color: rgba(255,255,255,0.4); margin-top: 15px;">-</div>
+                            <div style="flex: 1; text-align: center;">
+                                <span
+                                    style="font-size: 10px; color: rgba(255,255,255,0.6); display: block; margin-bottom: 4px;">Afternoon</span>
+                                <select class="form-control-custom freq-afternoon"
+                                    style="padding: 10px; text-align: center;" onchange="updateFrequency(this)">
+                                    <option value="0" selected>0</option>
+                                    <option value="1">1</option>
+
+                                </select>
+                            </div>
+                            <div style="font-size: 18px; color: rgba(255,255,255,0.4); margin-top: 15px;">-</div>
+                            <div style="flex: 1; text-align: center;">
+                                <span
+                                    style="font-size: 10px; color: rgba(255,255,255,0.6); display: block; margin-bottom: 4px;">Night</span>
+                                <select class="form-control-custom freq-night"
+                                    style="padding: 10px; text-align: center;" onchange="updateFrequency(this)">
+                                    <option value="0">0</option>
+                                    <option value="1" selected>1</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <input type="hidden" name="t4" class="medicine-frequency" value="{{ med.frequency }}">
+                        <div style="margin-top: 6px; font-size: 12px; color: #00e5ff;">
+                            Frequency Format: <strong class="frequency-preview">{{ med.frequency }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Instructions</label>
+                        <input type="text" name="t6" class="form-control-custom medicine-instructions"
+                            value="{{ med.instructions }}" required autocomplete="off">
+                        <div class="error-msg" style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none;">
+                            Instructions must be at least 3 characters.</div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <!-- Default Initial Card -->
+                <div class="medicine-item"
+                    style="border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px; padding: 20px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.03);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h4 style="margin: 0; color: #00e5ff; font-size: 16px;">Medicine #1</h4>
+                        <button type="button" class="btn-remove-medicine"
+                            style="background: rgba(255, 77, 77, 0.1); border: 1px solid rgba(255, 77, 77, 0.3); color: #ff4d4d; padding: 4px 8px; border-radius: 6px; font-size: 12px; cursor: pointer; display: none;"
+                            onclick="removeMedicine(this)">
+                            <i class="fa fa-trash"></i> Remove
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Medicine Name</label>
+                        <input type="text" name="t2" class="form-control-custom medicine-name"
+                            value="{{ suggested_medicine }}" required autocomplete="off">
+                        <div class="error-msg" style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none;">
+                            Medicine name must be at least 3 characters.</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label>Dosage</label>
+                            <input type="text" name="t3" class="form-control-custom medicine-dosage"
+                                value="{{ suggested_dosage }}" required autocomplete="off">
+                            <div class="error-msg"
+                                style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none;">Dosage must be
+                                at least 2 characters.</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <input type="text" name="t5" class="form-control-custom medicine-duration"
+                                placeholder="e.g. 5 days, 1 week" required autocomplete="off">
+                            <div class="error-msg"
+                                style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none;">Duration must
+                                be at least 2 characters.</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Frequency (Morning - Afternoon - Night)</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div style="flex: 1; text-align: center;">
+                                <span
+                                    style="font-size: 10px; color: rgba(255,255,255,0.6); display: block; margin-bottom: 4px;">Morning</span>
+                                <select class="form-control-custom freq-morning"
+                                    style="padding: 10px; text-align: center;" onchange="updateFrequency(this)">
+                                    <option value="0">0</option>
+                                    <option value="1" selected>1</option>
+
+                                </select>
+                            </div>
+                            <div style="font-size: 18px; color: rgba(255,255,255,0.4); margin-top: 15px;">-</div>
+                            <div style="flex: 1; text-align: center;">
+                                <span
+                                    style="font-size: 10px; color: rgba(255,255,255,0.6); display: block; margin-bottom: 4px;">Afternoon</span>
+                                <select class="form-control-custom freq-afternoon"
+                                    style="padding: 10px; text-align: center;" onchange="updateFrequency(this)">
+                                    <option value="0" selected>0</option>
+                                    <option value="1">1</option>
+
+                                </select>
+                            </div>
+                            <div style="font-size: 18px; color: rgba(255,255,255,0.4); margin-top: 15px;">-</div>
+                            <div style="flex: 1; text-align: center;">
+                                <span
+                                    style="font-size: 10px; color: rgba(255,255,255,0.6); display: block; margin-bottom: 4px;">Night</span>
+                                <select class="form-control-custom freq-night"
+                                    style="padding: 10px; text-align: center;" onchange="updateFrequency(this)">
+                                    <option value="0">0</option>
+                                    <option value="1" selected>1</option>
+
+
+                                </select>
+                            </div>
+                        </div>
+                        <input type="hidden" name="t4" class="medicine-frequency" value="1-0-1">
+                        <div style="margin-top: 6px; font-size: 12px; color: #00e5ff;">
+                            Frequency Format: <strong class="frequency-preview">1-0-1</strong>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Instructions</label>
+                        <input type="text" name="t6" class="form-control-custom medicine-instructions"
+                            value="{{ suggested_instructions }}" placeholder="e.g. Take after food" required
+                            autocomplete="off">
+                        <div class="error-msg" style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none;">
+                            Instructions must be at least 3 characters.</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Dynamic Control Button -->
+            <button type="button" id="addMedicineBtn" class="btn-submit"
+                style="background: rgba(0, 229, 255, 0.1); border: 1px solid #00e5ff; color: #00e5ff; margin-bottom: 25px; box-shadow: none; font-weight: 600; text-transform: uppercase;">
+                <i class="fa fa-plus" style="margin-right: 8px;"></i> Add Another Medicine
+            </button>
+
+            <div class="form-group">
+                <label for="t7">Prescribed Date</label>
+                <input type="date" id="t7" name="t7" class="form-control-custom" required>
+                <div class="error-msg" id="err_t7"
+                    style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none;">Prescribed date is
+                    required.</div>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn-submit">Save Prescriptions</button>
+        </form>
+    </div>
+</div>
+
+<!-- Raw HTML Template for dynamic copying -->
+<template id="medicineTemplate">
+    <div class="medicine-item"
+        style="border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px; padding: 20px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.03); transform: scale(0.98); opacity: 0; transition: all 0.3s ease;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h4 class="medicine-title" style="margin: 0; color: #00e5ff; font-size: 16px;">Medicine #</h4>
+            <button type="button" class="btn-remove-medicine"
+                style="background: rgba(255, 77, 77, 0.1); border: 1px solid rgba(255, 77, 77, 0.3); color: #ff4d4d; padding: 4px 8px; border-radius: 6px; font-size: 12px; cursor: pointer;"
+                onclick="removeMedicine(this)">
+                <i class="fa fa-trash"></i> Remove
+            </button>
+        </div>
+
+        <div class="form-group">
+            <label>Medicine Name</label>
+            <input type="text" name="t2" class="form-control-custom medicine-name" required autocomplete="off">
+            <div class="error-msg" style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none;">Medicine
+                name must be at least 3 characters.</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label>Dosage</label>
+                <input type="text" name="t3" class="form-control-custom medicine-dosage" required autocomplete="off">
+                <div class="error-msg" style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none;">Dosage
+                    must be at least 2 characters.</div>
+            </div>
+
+            <div class="form-group">
+                <label>Duration</label>
+                <input type="text" name="t5" class="form-control-custom medicine-duration"
+                    placeholder="e.g. 5 days, 1 week" required autocomplete="off">
+                <div class="error-msg" style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none;">Duration
+                    must be at least 2 characters.</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Frequency (Morning - Afternoon - Night)</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="flex: 1; text-align: center;">
+                    <span
+                        style="font-size: 10px; color: rgba(255,255,255,0.6); display: block; margin-bottom: 4px;">Morning</span>
+                    <select class="form-control-custom freq-morning" style="padding: 10px; text-align: center;"
+                        onchange="updateFrequency(this)">
+                        <option value="0">0</option>
+                        <option value="1" selected>1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+                <div style="font-size: 18px; color: rgba(255,255,255,0.4); margin-top: 15px;">-</div>
+                <div style="flex: 1; text-align: center;">
+                    <span
+                        style="font-size: 10px; color: rgba(255,255,255,0.6); display: block; margin-bottom: 4px;">Afternoon</span>
+                    <select class="form-control-custom freq-afternoon" style="padding: 10px; text-align: center;"
+                        onchange="updateFrequency(this)">
+                        <option value="0" selected>0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+                <div style="font-size: 18px; color: rgba(255,255,255,0.4); margin-top: 15px;">-</div>
+                <div style="flex: 1; text-align: center;">
+                    <span
+                        style="font-size: 10px; color: rgba(255,255,255,0.6); display: block; margin-bottom: 4px;">Night</span>
+                    <select class="form-control-custom freq-night" style="padding: 10px; text-align: center;"
+                        onchange="updateFrequency(this)">
+                        <option value="0">0</option>
+                        <option value="1" selected>1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+            </div>
+            <input type="hidden" name="t4" class="medicine-frequency" value="1-0-1">
+            <div style="margin-top: 6px; font-size: 12px; color: #00e5ff;">
+                Frequency Format: <strong class="frequency-preview">1-0-1</strong>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Instructions</label>
+            <input type="text" name="t6" class="form-control-custom medicine-instructions"
+                placeholder="e.g. Take after food" required autocomplete="off">
+            <div class="error-msg" style="color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none;">Instructions
+                must be at least 3 characters.</div>
+        </div>
+    </div>
+</template>
+
+<script>
+    // Make updateFrequency and removeMedicine global for simple inline event binding
+    function updateFrequency(selectEl) {
+        const item = selectEl.closest('.medicine-item');
+        const morning = item.querySelector('.freq-morning').value;
+        const afternoon = item.querySelector('.freq-afternoon').value;
+        const night = item.querySelector('.freq-night').value;
+        const combined = `${morning}-${afternoon}-${night}`;
+        item.querySelector('.medicine-frequency').value = combined;
+        item.querySelector('.frequency-preview').textContent = combined;
+    }
+
+    function removeMedicine(buttonEl) {
+        const item = buttonEl.closest('.medicine-item');
+        item.style.transform = "scale(0.95)";
+        item.style.opacity = "0";
+        setTimeout(() => {
+            item.remove();
+            reindexMedicines();
+            validateAllFields();
+        }, 300);
+    }
+
+    function reindexMedicines() {
+        const items = document.querySelectorAll('.medicine-item');
+        items.forEach((item, index) => {
+            const title = item.querySelector('h4, .medicine-title');
+            if (title) {
+                title.textContent = `Medicine #${index + 1}`;
+            }
+            const removeBtn = item.querySelector('.btn-remove-medicine');
+            if (removeBtn) {
+                removeBtn.style.display = (items.length === 1) ? "none" : "block";
+            }
+        });
+    }
+
+    function validateAllFields() {
+        const submitBtn = document.getElementById("submitBtn");
+        let allValid = true;
+
+        // 1. Validate Patient/Diagnosis (t1)
+        const t1 = document.getElementById("t1");
+        const err_t1 = document.getElementById("err_t1");
+        if (t1.value.trim().length >= 3) {
+            t1.style.borderColor = "#2a9d8f";
+            t1.style.backgroundColor = "rgba(42, 157, 143, 0.08)";
+            err_t1.style.display = "none";
+        } else {
+            t1.style.borderColor = "#e63946";
+            t1.style.backgroundColor = "rgba(230, 57, 70, 0.08)";
+            err_t1.style.display = "block";
+            allValid = false;
+        }
+
+        // 2. Validate Date (t7)
+        const t7 = document.getElementById("t7");
+        const err_t7 = document.getElementById("err_t7");
+        if (t7.value !== "") {
+            t7.style.borderColor = "#2a9d8f";
+            t7.style.backgroundColor = "rgba(42, 157, 143, 0.08)";
+            err_t7.style.display = "none";
+        } else {
+            t7.style.borderColor = "#e63946";
+            t7.style.backgroundColor = "rgba(230, 57, 70, 0.08)";
+            err_t7.style.display = "block";
+            allValid = false;
+        }
+
+        // 3. Validate each medicine row
+        document.querySelectorAll('.medicine-item').forEach(item => {
+            // Name
+            const nameEl = item.querySelector('.medicine-name');
+            const errName = nameEl.nextElementSibling;
+            if (nameEl.value.trim().length >= 3) {
+                nameEl.style.borderColor = "#2a9d8f";
+                nameEl.style.backgroundColor = "rgba(42, 157, 143, 0.08)";
+                errName.style.display = "none";
+            } else {
+                nameEl.style.borderColor = "#e63946";
+                nameEl.style.backgroundColor = "rgba(230, 57, 70, 0.08)";
+                errName.style.display = "block";
+                allValid = false;
+            }
+
+            // Dosage
+            const dosageEl = item.querySelector('.medicine-dosage');
+            const errDosage = dosageEl.nextElementSibling;
+            if (dosageEl.value.trim().length >= 2) {
+                dosageEl.style.borderColor = "#2a9d8f";
+                dosageEl.style.backgroundColor = "rgba(42, 157, 143, 0.08)";
+                errDosage.style.display = "none";
+            } else {
+                dosageEl.style.borderColor = "#e63946";
+                dosageEl.style.backgroundColor = "rgba(230, 57, 70, 0.08)";
+                errDosage.style.display = "block";
+                allValid = false;
+            }
+
+            // Duration
+            const durationEl = item.querySelector('.medicine-duration');
+            const errDuration = durationEl.nextElementSibling;
+            if (durationEl.value.trim().length >= 2) {
+                durationEl.style.borderColor = "#2a9d8f";
+                durationEl.style.backgroundColor = "rgba(42, 157, 143, 0.08)";
+                errDuration.style.display = "none";
+            } else {
+                durationEl.style.borderColor = "#e63946";
+                durationEl.style.backgroundColor = "rgba(230, 57, 70, 0.08)";
+                errDuration.style.display = "block";
+                allValid = false;
+            }
+
+            // Instructions
+            const instructionsEl = item.querySelector('.medicine-instructions');
+            const errInstructions = instructionsEl.nextElementSibling;
+            if (instructionsEl.value.trim().length >= 3) {
+                instructionsEl.style.borderColor = "#2a9d8f";
+                instructionsEl.style.backgroundColor = "rgba(42, 157, 143, 0.08)";
+                errInstructions.style.display = "none";
+            } else {
+                instructionsEl.style.borderColor = "#e63946";
+                instructionsEl.style.backgroundColor = "rgba(230, 57, 70, 0.08)";
+                errInstructions.style.display = "block";
+                allValid = false;
+            }
+        });
+
+        submitBtn.disabled = !allValid;
+        return allValid;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("prescriptionForm");
+        const addBtn = document.getElementById("addMedicineBtn");
+        const dateInput = document.getElementById("t7");
+
+        // Set default date to today
+        if (!dateInput.value) {
+            dateInput.value = new Date().toISOString().split("T")[0];
+        }
+
+        // Initialize prefilled frequency selectors
+        document.querySelectorAll('.medicine-item').forEach(card => {
+            const freqInput = card.querySelector('.medicine-frequency');
+            if (freqInput && freqInput.value) {
+                const parts = freqInput.value.split('-');
+                if (parts.length === 3) {
+                    card.querySelector('.freq-morning').value = parts[0];
+                    card.querySelector('.freq-afternoon').value = parts[1];
+                    card.querySelector('.freq-night').value = parts[2];
+                }
+            }
+        });
+
+        // Add dynamic event listeners to inputs
+        function bindValidationListeners(item) {
+            const elements = [
+                item.querySelector('.medicine-name'),
+                item.querySelector('.medicine-dosage'),
+                item.querySelector('.medicine-duration'),
+                item.querySelector('.medicine-instructions')
+            ];
+            elements.forEach(el => {
+                if (el) {
+                    el.addEventListener("input", validateAllFields);
+                    el.addEventListener("blur", validateAllFields);
+                }
+            });
+        }
+
+        // Bind for initial items
+        document.querySelectorAll('.medicine-item').forEach(bindValidationListeners);
+
+        // Bind main fields
+        document.getElementById("t1").addEventListener("input", validateAllFields);
+        document.getElementById("t1").addEventListener("blur", validateAllFields);
+        dateInput.addEventListener("change", validateAllFields);
+
+        // Add medicine button click
+        addBtn.addEventListener("click", function () {
+            const container = document.getElementById("medicinesContainer");
+            const temp = document.getElementById("medicineTemplate");
+            const clone = temp.content.cloneNode(true);
+
+            // Append clone
+            const newElem = clone.querySelector('.medicine-item');
+            container.appendChild(clone);
+
+            // Trigger animation
+            setTimeout(() => {
+                newElem.style.transform = "scale(1)";
+                newElem.style.opacity = "1";
+            }, 50);
+
+            reindexMedicines();
+            bindValidationListeners(newElem);
+            validateAllFields();
+        });
+
+        // Form submit handler
+        form.addEventListener("submit", function (e) {
+            if (!validateAllFields()) {
+                e.preventDefault();
+                alert("Please correct all errors in the prescription form before saving.");
+            }
+        });
+
+        // Perform initial validation
+        reindexMedicines();
+        validateAllFields();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Patient Dashboard{% endblock %}
+{% block background_image %}{% static 'patient_bg.png' %}{% endblock %}
+
+{% block content %}
+<div class="hero-section" style="min-height: 70vh; display: flex; align-items: center; justify-content: center; padding: 40px 30px;">
+    <div class="glass-card" style="max-width: 800px; text-align: center;">
+        <div style="font-size: 60px; color: #00e5ff; margin-bottom: 20px;">
+            <i class="fa fa-user-circle"></i>
+        </div>
+        <h2>Welcome, {{request.session.username}}</h2>
+        <p style="font-size: 18px; color: rgba(255, 255, 255, 0.8);">Your Health Monitoring Dashboard</p>
+        <div style="display: flex; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
+            <a href="{% url 'insertsymptom' %}" class="nav-btn" style="margin: 10px;">Record Symptoms</a>
+            <a href="{% url 'showdiagnosis' %}" class="nav-btn" style="margin: 10px;">My Diagnoses</a>
+            <a href="{% url 'showlabtest' %}" class="nav-btn" style="margin: 10px;">Lab Reports</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

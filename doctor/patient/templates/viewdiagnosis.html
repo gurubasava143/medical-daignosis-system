@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Diagnoses{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h2>Diagnosis Records</h2>
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Diagnosis ID</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Condition</th>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Follow-up</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in userdict %}
+                <tr>
+                    <td>{% if i.diagnosis_id %}{{ i.diagnosis_id }}{% else %}DIAG-{{ i.id }}{% endif %}</td>
+                    <td>{{i.patient}}</td>
+                    <td>{{i.doctor}}</td>
+                    <td>{{i.diagnosis_date}}</td>
+                    <td>{{i.condition_name}}</td>
+                    <td>{{i.diagnosis_type}}</td>
+                    <td>
+                        {% if i.severity_level == 'High' or i.severity_level == 'high' %}
+                            <span class="badge bg-danger">High</span>
+                        {% elif i.severity_level == 'Medium' or i.severity_level == 'medium' %}
+                            <span class="badge bg-warning text-dark">Medium</span>
+                        {% else %}
+                            <span class="badge bg-success">Low</span>
+                        {% endif %}
+                    </td>
+                    <td>{{i.follow_up_date}}</td>
+                    <td>
+                        <a href="{% url 'deldiagnosis' i.id %}" class="btn-action btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

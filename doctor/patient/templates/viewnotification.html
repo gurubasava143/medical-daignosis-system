@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Notifications{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h2>System Notifications</h2>
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Message</th>
+                    <th>Type</th>
+                    <th>Read Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for notification in userdict %}
+                <tr>
+                    <td>{{ notification.user }}</td>
+                    <td>{{ notification.message }}</td>
+                    <td>{{ notification.notification_type }}</td>
+                    <td>{{ notification.is_read|yesno:"Read,Unread" }}</td>
+                    <td>{{ notification.created_date }}</td>
+                    <td>
+                        <a href="{% url 'viewnotificationdetail' notification.id %}" class="action-btn view-btn">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Prescription{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h2>Prescription Details</h2>
+
+    <div class="table-responsive">
+        <table class="table-custom">
+            <tbody>
+                <tr><th>Diagnosis</th><td>{{ pres.diagnosis }}</td></tr>
+                <tr><th>Medicine</th><td>{{ pres.medicine_name }}</td></tr>
+                <tr><th>Dosage</th><td>{{ pres.dosage }}</td></tr>
+                <tr><th>Frequency</th><td>{{ pres.frequency }}</td></tr>
+                <tr><th>Duration</th><td>{{ pres.duration }}</td></tr>
+                <tr><th>Instructions</th><td>{{ pres.instructions }}</td></tr>
+                <tr><th>Prescribed Date</th><td>{{ pres.prescribed_date }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top:16px;">
+        <a href="{% url 'showprescription' %}" class="btn-action">Back</a>
+    </div>
+</div>
+{% endblock %}
+

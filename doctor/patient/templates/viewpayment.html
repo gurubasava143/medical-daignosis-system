@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Payments{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h2>Payment Records</h2>
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Diagnosis</th>
+                    <th>Lab Test</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Method</th>
+                    <th>Transaction ID</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in userdict %}
+                <tr>
+                    <td>{{i.patient}}</td>
+                    <td>{{i.diagnosis}}</td>
+                    <td>{{i.lab_test}}</td>
+                    <td>${{i.amount}}</td>
+                    <td>{{i.payment_date}}</td>
+                    <td>{{i.payment_method}}</td>
+                    <td>{{i.transaction_id}}</td>
+                    <td>{{i.status}}</td>
+                    <td>
+                        <a href="{% url 'delpayment' i.id %}" class="btn-action btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

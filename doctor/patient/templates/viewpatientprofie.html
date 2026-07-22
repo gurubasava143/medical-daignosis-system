@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Patient Profiles{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h2>Patient Profiles</h2>
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Blood</th>
+                    <th>Weight</th>
+                    <th>Height</th>
+                    <th>Conditions</th>
+                    <th>Symptoms</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in userdict %}
+                <tr>
+                    <td>{{i.user}}</td>
+                    <td>{{i.age}}</td>
+                    <td>{{i.gender}}</td>
+                    <td>{{i.blood_group}}</td>
+                    <td>{{i.weight}}</td>
+                    <td>{{i.height}}</td>
+                    <td>{{i.existing_conditions}}</td>
+                    <td>{{i.symptoms}}</td>
+                    <td>
+                        <a href="{% url 'insertprescript' %}?patient={{i.user}}" class="nav-btn"
+                            style="padding: 5px 15px; font-size: 11px;">Add Prescription</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

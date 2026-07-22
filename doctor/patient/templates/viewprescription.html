@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Prescriptions{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h2>Prescription Records</h2>
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Diagnosis</th>
+                    <th>Medicine</th>
+                    <th>Dosage</th>
+                    <th>Frequency</th>
+                    <th>Duration</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in userdict %}
+                <tr>
+                    <td>{{i.diagnosis}}</td>
+                    <td>{{i.medicine_name}}</td>
+                    <td>{{i.dosage}}</td>
+                    <td>{{i.frequency}}</td>
+                    <td>{{i.duration}}</td>
+                    <td>{{i.prescribed_date}}</td>
+                    <td>
+                        {% if request.session.utype == 'doctor' %}
+                            <a href="{% url 'delprescription' i.id %}" class="btn-action btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
+                        {% endif %}
+                        {% if request.session.utype == 'patient' %}
+                            <a href="#" class="btn-action btn-view" style="pointer-events:none; opacity:0.6;">View</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

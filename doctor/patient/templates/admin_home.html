@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard{% endblock %}
+{% block background_image %}{% static 'admin_bg.png' %}{% endblock %}
+
+{% block content %}
+<div class="hero-section" style="min-height: 70vh; display: flex; align-items: center; justify-content: center; padding: 40px 30px;">
+    <div class="glass-card" style="max-width: 800px; text-align: center;">
+        <div style="font-size: 60px; color: #00e5ff; margin-bottom: 20px;">
+            <i class="fa fa-user-shield"></i>
+        </div>
+        <h2>Welcome, Admin</h2>
+        <p style="font-size: 18px; color: rgba(255, 255, 255, 0.8);">Managing the Medical Diagnosis System</p>
+        <div style="display: flex; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
+            <a href="{% url 'showdiagnosis' %}" class="nav-btn" style="margin: 10px;">View Diagnoses</a>
+            <a href="{% url 'showmedicalhistory' %}" class="nav-btn" style="margin: 10px;">View Medical History</a>
+            <a href="{% url 'showmpayment' %}" class="nav-btn" style="margin: 10px;">View All Payments</a>
+            <a href="{% url 'insertnotification' %}" class="nav-btn" style="margin: 10px;">Send Notification</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+<a href="{% url 'patient_home' %}">Dashboard Home</a>
+{% if not request.session.profile_exists %}
+    <a href="{% url 'insertpatient' %}">Create Profile</a>
+{% else %}
+    <a href="{% url 'insertsymptom' %}">Add Symptoms</a>
+    <a href="{% url 'showdiagnosis' %}">View Diagnosis</a>
+    <a href="{% url 'showlabtest' %}">View Lab</a>
+    <a href="{% url 'showprescription' %}">View Prescription</a>
+    <a href="{% url 'insertpayment' %}">Add Payment</a>
+    <a href="{% url 'showmnotification' %}">Notifications</a>
+    <a href="{% url 'insertfeedback' %}">Add Feedback</a>
+{% endif %}
