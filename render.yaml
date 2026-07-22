@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: medical-diagnosis
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: bash build.sh
+    startCommand: gunicorn doctor.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.1
+      - key: DEBUG
+        value: false
+      - key: SECRET_KEY
+        generateValue: true
