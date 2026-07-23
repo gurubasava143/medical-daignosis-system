@@ -1,1 +1,1 @@
-web: gunicorn doctor.wsgi
+web: gunicorn doctor.doctor.wsgi:application

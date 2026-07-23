@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-uwms-%ldu_!!zh=o49%q=_n*%&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,.onrender.com').split(',') if host.strip()]
 
 
 # Application definition
@@ -134,9 +134,15 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+STATICFILES_DIRS = []
+
+project_static_dir = os.path.join(BASE_DIR, 'static')
+if os.path.exists(project_static_dir):
+    STATICFILES_DIRS.append(project_static_dir)
+
+repo_static_dir = os.path.join(BASE_DIR.parent, 'static')
+if os.path.exists(repo_static_dir):
+    STATICFILES_DIRS.append(repo_static_dir)
 
 # Media files (Uploaded files)
 MEDIA_URL = '/media/'

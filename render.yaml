@@ -5,7 +5,7 @@ services:
     region: oregon
     plan: free
     buildCommand: bash build.sh
-    startCommand: gunicorn doctor.wsgi:application
+    startCommand: gunicorn doctor.doctor.wsgi:application
     envVars:
       - key: PYTHON_VERSION
         value: 3.12
@@ -13,3 +13,5 @@ services:
         value: false
       - key: SECRET_KEY
         generateValue: true
+      - key: ALLOWED_HOSTS
+        value: medical-diagnosis.onrender.com,localhost,127.0.0.1
