@@ -21,7 +21,6 @@ gunicorn==26.0.0
 h11==0.16.0
 httptools==0.8.0
 idna==3.18
-mysqlclient==2.2.8
 packaging==26.2
 pillow==12.2.0
 psycopg2-binary==2.9.12

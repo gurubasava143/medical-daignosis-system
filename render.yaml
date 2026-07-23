@@ -5,7 +5,7 @@ services:
     region: oregon
     plan: free
     buildCommand: bash build.sh
-    startCommand: cd doctor && gunicorn doctor.wsgi:application
+    startCommand: cd doctor && gunicorn --bind 0.0.0.0:$PORT doctor.wsgi:application
     envVars:
       - key: PYTHON_VERSION
         value: 3.12

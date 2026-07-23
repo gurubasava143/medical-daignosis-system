@@ -1,1 +1,1 @@
-web: gunicorn doctor.doctor.wsgi:application
+web: cd doctor && gunicorn --bind 0.0.0.0:$PORT doctor.wsgi:application
