@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from patient.models import userregistration
 
@@ -30,6 +31,7 @@ from patient.models import userlogin
 
 # Create your views here.
 
+@csrf_exempt
 def logcheck(request):
     if request.method=="POST":
         username = request.POST.get('t1', '').strip()
